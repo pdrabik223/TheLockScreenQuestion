@@ -1,0 +1,6 @@
+[submodule "sfml"]
+	path = sfml
+	url = https://github.com/SFML/sfml
+[submodule "pm-stl"]
+	path = pm-stl
+	url = https://github.com/Sentinel-Inc/pm-stl
