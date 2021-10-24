@@ -33,10 +33,12 @@ struct Line {
   Line(const Line &other) = default;
   Line &operator=(const Line &other) = default;
 
-  void Draw(sf::RenderWindow &window);
-
+  void Draw(sf::RenderWindow &window, sf::Vector2f screen_start, sf::Vector2f screen_finish);
+  const pm::Coord &GetStart() const;
+  const pm::Coord &GetFinish() const;
   pm::Coord start;
   pm::Coord finish;
+
   float width = 10;
 };
 

@@ -24,6 +24,7 @@ bool Lock::PushLine(const Lock::Line &new_gesture) {
     return false;
   if (dots_[Int(new_gesture.second)])
     return false;
+
   dots_[Int(new_gesture.first)] = true;
   dots_[Int(new_gesture.second)] = true;
 

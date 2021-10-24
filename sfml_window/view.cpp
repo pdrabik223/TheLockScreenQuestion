@@ -4,8 +4,9 @@
 #include "view.h"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <cmath>
 #include <iostream>
-
+#define PI 3.14159265
 void Dot::Draw(sf::RenderWindow &window, const sf::Vector2f &screen_placement) {
 
   sf::CircleShape circle(radius);
@@ -13,33 +14,57 @@ void Dot::Draw(sf::RenderWindow &window, const sf::Vector2f &screen_placement) {
 
   switch (state) {
   case State::FREE:
-    circle.setFillColor(sf::Color::Blue);
+    circle.setFillColor(sf::Color::White);
     break;
   case State::OCCUPIED:
-    circle.setFillColor(sf::Color::Green);
+    circle.setFillColor(sf::Color::Cyan);
     break;
   }
-  circle.setPosition(screen_placement.x + radius, screen_placement.y + radius);
+  circle.setPosition(screen_placement.x, screen_placement.y);
   circle.setScale(1, 1);
   window.draw(circle);
 }
 const pm::Coord &Dot::GetPlacement() const { return placement; }
 void Dot::SetRadius(float radius) { Dot::radius = radius; }
 
-void Line::Draw(sf::RenderWindow &window) {
+void Line::Draw(sf::RenderWindow &window, sf::Vector2f screen_start,
+                sf::Vector2f screen_finish) {
 
-  float length = sqrt(pow(start.x - finish.x, 2) + pow(start.y - finish.y, 2));
-  sf::RectangleShape line({length, width});
-  line.setPosition({(float)start.x, (float)start.y});
+  //  double length = sqrt(pow(screen_start.x - screen_finish.x, 2) +
+  //                       pow(screen_start.y - screen_finish.y, 2));
+  //
+  //  sf::RectangleShape line({(float)length, width});
+  //  line.setFillColor(sf::Color::Cyan);
+  //
+  //  line.setOrigin(width / 2, width / 2);
+  //
+  //  line.setPosition(
+  //      {(float)screen_start.x + width, (float)screen_start.y + width});
+  //
+  //
+  //
+  //  double cos_angle = abs(screen_start.x - screen_finish.x) / length;
+  //
+  //  auto angle = sin(cos_angle) * (180 / PI);
+  //  //  angle *= 180;
+  //  //  angle /= PI;
+  //
+  //  line.rotate(angle);
 
-  line.setFillColor(sf::Color::Blue);
-  line.rotate(cos(length / abs(start.x - finish.x)));
-  window.draw(line);
+  sf::VertexArray lines(sf::LinesStrip, 2);
+  lines[0].position = {screen_start.x + width, screen_start.y + width};
+  lines[0].color = sf::Color::Cyan;
+  lines[1].position = {screen_finish.x + width, screen_finish.y + width};
+  lines[1].color = sf::Color::Cyan;
+
+  window.draw(lines);
 }
 Line::Line(const Lock::Line &line) {
   start = line.first;
   finish = line.second;
 }
+const pm::Coord &Line::GetStart() const { return start; }
+const pm::Coord &Line::GetFinish() const { return finish; }
 
 View::View(const Lock &lock) : shape_(lock.GetShape()) {
 
@@ -54,30 +79,38 @@ View::View(const Lock &lock) : shape_(lock.GetShape()) {
 }
 
 void View::Draw(sf::RenderWindow &window) {
-  window.clear({255, 255, 255});
+  window.clear({40, 40, 40});
 
-  printf("window size x: %u\twindow size y: %u\n", window.getSize().x,
-         window.getSize().y);
-
-  float dot_radius = window.getSize().x < window.getSize().y
-                         ? window.getSize().x / 80
-                         : window.getSize().y / 80;
+  float dot_radius;
+  dot_radius = (window.getSize().x < window.getSize().y ? window.getSize().x
+                                                        : window.getSize().y) /
+               80;
 
   sf::Vector2f frame_shift = {dot_radius * 10, dot_radius * 10};
 
-  printf("frame shift x: %f\tframe shift: %f\n", frame_shift.x, frame_shift.y);
+  sf::Vector2f dot_shift = {((float)window.getSize().x / (float)shape_.x),
+                            ((float)window.getSize().y / (float)shape_.y)};
 
-  sf::Vector2f dot_shift = {
-      ((float)window.getSize().x  / (float)shape_.x),
-      ((float)window.getSize().y  / (float)shape_.y)};
+  for (auto line : lines_) {
 
-  printf("dot shift x: %f\tdot shift: %f\n", dot_shift.x, dot_shift.y);
+    sf::Vector2f start_placement = {
+        (float)frame_shift.x + (line.GetStart().x * dot_shift.x) + dot_radius,
+        (float)frame_shift.y + (line.GetStart().y * dot_shift.y) + dot_radius};
+
+    sf::Vector2f finish_placement = {
+        (float)frame_shift.x + (line.GetFinish().x * dot_shift.x) + dot_radius,
+        (float)frame_shift.y + (line.GetFinish().y * dot_shift.y) + dot_radius};
+
+    line.Draw(window, start_placement, finish_placement);
+  }
 
   for (auto dot : dots_) {
 
     sf::Vector2f placement = {
-        (float)frame_shift.x + (dot.GetPlacement().x * dot_shift.x),
-        (float)frame_shift.y + (dot.GetPlacement().y * dot_shift.y)};
+        (float)frame_shift.x + (dot.GetPlacement().x * dot_shift.x) +
+            dot_radius,
+        (float)frame_shift.y + (dot.GetPlacement().y * dot_shift.y) +
+            dot_radius};
 
     dot.radius = dot_radius;
 

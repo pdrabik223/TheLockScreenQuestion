@@ -11,6 +11,7 @@ class Lock {
 
 public:
   using Line = std::pair<pm::Coord, pm::Coord>;
+  using Blockade =  std::vector<Line>;
 
   Lock(const pm::Coord &shape);
   Lock(unsigned x,unsigned y);
@@ -28,7 +29,7 @@ private:
 protected:
   pm::Coord shape_;
   std::vector<bool> dots_;
-  std::vector<Line> lines_;
+  Blockade lines_;
 };
 
 #endif // THELOCKSCREENQUESTION__LOCK_H_
