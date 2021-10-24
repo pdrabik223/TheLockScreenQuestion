@@ -11,7 +11,8 @@ void Window::MainLoop() {
   settings.antialiasingLevel = 8;
 
   sf::RenderWindow window(sf::VideoMode(width_, height_), "CoA",
-                          sf::Style::Default, settings);
+                          sf::Style::Titlebar | sf::Style::Close, settings);
+
 
   window.setPosition(sf::Vector2i(position_.x, position_.y));
 //  std::this_thread::sleep_for(std::chrono::milliseconds(500));

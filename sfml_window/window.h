@@ -24,6 +24,7 @@ class Window {
   View PopFrame();
   void PushFrame(const View &new_frame);
 
+
   int GetQueueSize();
   ~Window() {
     screen_thread_->join();

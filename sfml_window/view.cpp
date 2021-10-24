@@ -4,11 +4,12 @@
 #include "view.h"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <iostream>
 
 void Dot::Draw(sf::RenderWindow &window, const sf::Vector2f &screen_placement) {
 
   sf::CircleShape circle(radius);
-  circle.setPointCount(100);
+  circle.setPointCount(10);
 
   switch (state) {
   case State::FREE:
@@ -18,10 +19,12 @@ void Dot::Draw(sf::RenderWindow &window, const sf::Vector2f &screen_placement) {
     circle.setFillColor(sf::Color::Green);
     break;
   }
-  circle.setPosition(screen_placement.x, screen_placement.y);
+  circle.setPosition(screen_placement.x + radius, screen_placement.y + radius);
+  circle.setScale(1, 1);
   window.draw(circle);
 }
 const pm::Coord &Dot::GetPlacement() const { return placement; }
+void Dot::SetRadius(float radius) { Dot::radius = radius; }
 
 void Line::Draw(sf::RenderWindow &window) {
 
@@ -53,21 +56,31 @@ View::View(const Lock &lock) : shape_(lock.GetShape()) {
 void View::Draw(sf::RenderWindow &window) {
   window.clear({255, 255, 255});
 
-  pm::Coord frame_shift = {(int)window.getSize().x / 20,
-                           (int)window.getSize().y / 20};
+  printf("window size x: %u\twindow size y: %u\n", window.getSize().x,
+         window.getSize().y);
 
-  pm::Coord dot_shift = {
-      (int)((window.getSize().x - (frame_shift.x * 2)) / shape_.x),
-      (int)((window.getSize().y - (frame_shift.y * 2)) / shape_.y)};
+  float dot_radius = window.getSize().x < window.getSize().y
+                         ? window.getSize().x / 80
+                         : window.getSize().y / 80;
 
-  float dot_radius = window.getSize().x / 10;
+  sf::Vector2f frame_shift = {dot_radius * 10, dot_radius * 10};
+
+  printf("frame shift x: %f\tframe shift: %f\n", frame_shift.x, frame_shift.y);
+
+  sf::Vector2f dot_shift = {
+      ((float)window.getSize().x  / (float)shape_.x),
+      ((float)window.getSize().y  / (float)shape_.y)};
+
+  printf("dot shift x: %f\tdot shift: %f\n", dot_shift.x, dot_shift.y);
 
   for (auto dot : dots_) {
 
     sf::Vector2f placement = {
-        (float)frame_shift.x + dot.GetPlacement().x * dot_shift.x,
-        (float)frame_shift.y + dot.GetPlacement().y * dot_shift.y};
+        (float)frame_shift.x + (dot.GetPlacement().x * dot_shift.x),
+        (float)frame_shift.y + (dot.GetPlacement().y * dot_shift.y)};
+
+    dot.radius = dot_radius;
+
     dot.Draw(window, placement);
   }
-
 }

@@ -19,7 +19,7 @@ struct Dot {
   Dot &operator=(const Dot &other) = default;
 
   const pm::Coord &GetPlacement() const;
-
+  void SetRadius(float radius);
   void Draw(sf::RenderWindow &window, const sf::Vector2f &screen_placement);
 
   pm::Coord placement;
