@@ -20,8 +20,6 @@ bool Lock::PushLine(const Lock::Line &new_gesture) {
   // todo boundaries check
   // todo passing thru check
 
-  if (dots_[Int(new_gesture.first)])
-    return false;
   if (dots_[Int(new_gesture.second)])
     return false;
 
@@ -37,4 +35,15 @@ Lock::Lock(unsigned int x, unsigned y) : shape_(x, y) {
   for (int d = 0; d < GetSize(); ++d) {
     dots_.emplace_back(false);
   }
+}
+void Lock::PushPin(unsigned int s, unsigned int f) {
+  PushLine({{(int)s % shape_.x, (int)s / shape_.y},
+            {(int)f % shape_.x, (int)f / shape_.x}});
+  previous_dot_ = {(int)f % shape_.x, (int)f / shape_.x};
+}
+void Lock::PushPin(unsigned int f) {
+  if(previous_dot_ == pm::Coord(-1,-1)) throw "exception";
+
+  PushLine({previous_dot_,
+            {(int)f % shape_.x, (int)f / shape_.x}});
 }

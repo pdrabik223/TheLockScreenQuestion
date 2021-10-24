@@ -30,27 +30,6 @@ void Dot::SetRadius(float radius) { Dot::radius = radius; }
 void Line::Draw(sf::RenderWindow &window, sf::Vector2f screen_start,
                 sf::Vector2f screen_finish) {
 
-  //  double length = sqrt(pow(screen_start.x - screen_finish.x, 2) +
-  //                       pow(screen_start.y - screen_finish.y, 2));
-  //
-  //  sf::RectangleShape line({(float)length, width});
-  //  line.setFillColor(sf::Color::Cyan);
-  //
-  //  line.setOrigin(width / 2, width / 2);
-  //
-  //  line.setPosition(
-  //      {(float)screen_start.x + width, (float)screen_start.y + width});
-  //
-  //
-  //
-  //  double cos_angle = abs(screen_start.x - screen_finish.x) / length;
-  //
-  //  auto angle = sin(cos_angle) * (180 / PI);
-  //  //  angle *= 180;
-  //  //  angle /= PI;
-  //
-  //  line.rotate(angle);
-
   sf::VertexArray lines(sf::LinesStrip, 2);
   lines[0].position = {screen_start.x + width, screen_start.y + width};
   lines[0].color = sf::Color::Cyan;

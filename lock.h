@@ -23,11 +23,19 @@ public:
   bool GetDotState(const pm::Coord& position) const {return dots_[Int(position)];}
 
   bool PushLine(const Lock::Line& new_gesture);
-
+  void PushPin(unsigned s, unsigned f);
+  void PushPin(unsigned f);
+  void Clear(){
+    lines_.clear();
+    for (int i = 0; i < GetSize(); ++i) {
+      dots_[i] = false;
+    }
+  };
 private:
   int Int(const pm::Coord& position) const {return position.ToInt(shape_.x);}
 protected:
   pm::Coord shape_;
+  pm::Coord previous_dot_ = {-1,-1};
   std::vector<bool> dots_;
   Blockade lines_;
 };
