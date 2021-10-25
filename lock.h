@@ -18,6 +18,24 @@ public:
   Lock(const pm::Coord &shape);
   Lock(unsigned x, unsigned y);
 
+  Lock(const Lock &other) {
+    shape_ = other.shape_;
+    dots_ = other.dots_;
+    lines_ = other.lines_;
+    pin_ = other.pin_;
+  };
+
+  Lock &operator=(const Lock &other) {
+    if (&other == this)
+      return *this;
+    shape_ = other.shape_;
+    dots_ = other.dots_;
+    lines_ = other.lines_;
+    pin_ = other.pin_;
+
+    return *this;
+  }
+
   unsigned GetSize() const;
   pm::Coord GetShape() const;
   const std::vector<bool> &GetDots() const;
@@ -32,7 +50,9 @@ public:
   void Clear();
   bool CheckInput(unsigned input);
   Pin GetEmptyDots();
-  float SecurityStatus();
+  double SecurityStatus();
+  std::vector<std::pair<Lock::Pin, double>> GenerateLocks();
+  const Pin &GetPin() const;
 
 private:
   int Int(const pm::Coord &position) const { return position.ToInt(shape_.x); }

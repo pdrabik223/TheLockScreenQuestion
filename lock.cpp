@@ -101,25 +101,50 @@ Lock::Pin Lock::GetEmptyDots() {
   }
   return empty_list;
 }
-float Lock::SecurityStatus() {
-  float security_sum = 0;
+double Lock::SecurityStatus() {
+  double security_sum = 0;
   for (auto d : dots_)
     if (d)
       security_sum += 1;
 
   // lines are grouped based of their angle between the bottom of the screen
-  std::map<float, int> line_group;
+  std::map<double, int> line_group;
 
   for (const auto &l : lines_) {
     security_sum +=
         sqrt(pow(l.first.x - l.second.x, 2) + pow(l.first.y - l.second.y, 2)) /
         sqrt(GetSize());
-    //        line_group[]++;
     double delta_x = l.second.x - l.first.x;
     double delta_y = (l.second.y + l.first.y) * -1;
     double theta_radians = atan2(delta_y, delta_x);
+    line_group[theta_radians]++;
+  }
 
+  for (auto lg : line_group) {
+
+    // that's -0.33 for every repetition
+    if (lg.second >= 1)
+      lg.second--;
+    security_sum -= lg.second / sqrt(GetSize());
   }
 
   return security_sum;
 }
+std::vector<std::pair<Lock::Pin, double>> Lock::GenerateLocks() {
+  std::vector<std::pair<Pin, double>> output_vector;
+  for (auto move : GetEmptyDots()) {
+    Lock temp(*this);
+    temp.PushPin(move);
+
+    Lock::Pin temp_pin = temp.GetPin();
+    double temp_security = temp.SecurityStatus();
+
+    output_vector.emplace_back(
+        std::pair<Lock::Pin, double>(temp_pin, temp_security));
+
+    for (const auto &pin : temp.GenerateLocks())
+      output_vector.push_back(pin);
+  }
+  return output_vector;
+}
+const Lock::Pin &Lock::GetPin() const { return pin_; }
