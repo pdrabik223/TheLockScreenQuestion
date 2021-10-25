@@ -100,3 +100,17 @@ Lock::Pin Lock::GetEmptyDots() {
   }
   return empty_list;
 }
+float Lock::SecurityStatus() {
+  float security_sum = 0;
+  for (auto d : dots_)
+    if (d)
+      security_sum += 2;
+
+  for (const auto &l : lines_) {
+    security_sum +=
+        sqrt(pow(l.first.x - l.second.x, 2) + pow(l.first.y - l.second.y, 2));
+  }
+
+
+  return security_sum;
+}

@@ -16,7 +16,7 @@ void DisplayPin(const std::vector<unsigned> &pin){
 int main() {
 
   Window screen(800, 800);
-  Lock test(6, 6);
+  Lock test(3, 3);
   screen.PushFrame(View(test));
 
   while (1 < 2) {
@@ -42,6 +42,7 @@ int main() {
       else
         printf("incorrect input\n");
       screen.PushFrame(test);
+      printf("\t current security status: %f\n",test.SecurityStatus());
       break;
     }
   }

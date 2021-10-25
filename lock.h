@@ -32,6 +32,8 @@ public:
   void Clear();
   bool CheckInput(unsigned input);
   Pin GetEmptyDots();
+  float SecurityStatus();
+
 private:
   int Int(const pm::Coord &position) const { return position.ToInt(shape_.x); }
 
