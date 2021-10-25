@@ -17,6 +17,28 @@ const std::vector<Lock::Line> &Lock::GetLines() const { return lines_; }
 pm::Coord Lock::GetShape() const { return shape_; }
 void Lock::PushLine(const Lock::Line &new_gesture) {
 
+  // for now,
+  // gen dx, dy
+  // for every non visited dot, check if fits inside this dx,dy
+  // so connection (s,f) = s(0,0) , f(2,2) dx = abs(0-2); dy = abs(0-2)
+  // than go true every non visited dot, if there is  connection (s,d) that dx'
+  // = dx and dy'=dy if distance beetwen d and s is < than s and f mark that dot
+  // as visited
+
+  float dx = abs(new_gesture.first.x - new_gesture.second.x);
+  float dy = abs(new_gesture.first.y - new_gesture.second.y);
+
+  for (int i = 0; i < GetSize(); i++) {
+    if (!dots_[i]) {
+      float ddx = abs(new_gesture.first.x - (i % shape_.x));
+      float ddy = abs(new_gesture.first.y - (i / shape_.x));
+      if (dy/dx == ddy/ddx) {
+        if (sqrt(pow(ddx, 2)) + pow(ddy, 2) < sqrt(pow(dx, 2)) + pow(dy, 2))
+          dots_[i] = true;
+      }
+    }
+  }
+
   dots_[Int(new_gesture.first)] = true;
   dots_[Int(new_gesture.second)] = true;
 
@@ -33,9 +55,9 @@ Lock::Lock(unsigned int x, unsigned y) : shape_(x, y) {
 }
 void Lock::PushPin(unsigned int s, unsigned int f) {
 
-  if (!pin_.empty()){
-    if(pin_.back() != s)
-    throw std::invalid_argument("symbol must be continuous");
+  if (!pin_.empty()) {
+    if (pin_.back() != s)
+      throw std::invalid_argument("symbol must be continuous");
   }
 
   PushLine({{(int)s % shape_.x, (int)s / shape_.y},
@@ -47,12 +69,12 @@ void Lock::PushPin(unsigned int s, unsigned int f) {
 
 void Lock::PushPin(unsigned int f) {
 
-  if(!pin_.empty()) {
+  if (!pin_.empty())
     PushLine({{(int)pin_.back() % shape_.x, (int)pin_.back() / shape_.x},
               {(int)f % shape_.x, (int)f / shape_.x}});
-  }else{
+  else
     dots_[f] = true;
-  }
+
   pin_.push_back(f);
 }
 void Lock::Clear() {
