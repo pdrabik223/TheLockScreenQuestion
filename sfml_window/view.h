@@ -5,6 +5,7 @@
 #ifndef THELOCKSCREENQUESTION_SFML_WINDOW_VIEW_H_
 #define THELOCKSCREENQUESTION_SFML_WINDOW_VIEW_H_
 #include "../lock.h"
+#include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <coord/coord.h>
 
@@ -49,10 +50,12 @@ public:
   View &operator=(const View &other) = default;
   View(const Lock &lock);
   void Draw(sf::RenderWindow &window);
-
+  void DisplayLabel(int label, sf::Vector2f placement,float dot_radius ,bool is_occupied,
+                    sf::RenderWindow &window);
 protected:
   pm::Coord shape_;
   std::vector<Dot> dots_;
   std::vector<Line> lines_;
+  static sf::Font font_;
 };
 #endif // THELOCKSCREENQUESTION_SFML_WINDOW_VIEW_H_

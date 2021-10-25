@@ -4,9 +4,12 @@
 #include "view.h"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <cmath>
 #include <iostream>
 #define PI 3.14159265
+
+sf::Font View::font_;
 void Dot::Draw(sf::RenderWindow &window, const sf::Vector2f &screen_placement) {
 
   sf::CircleShape circle(radius);
@@ -47,6 +50,8 @@ const pm::Coord &Line::GetFinish() const { return finish; }
 
 View::View(const Lock &lock) : shape_(lock.GetShape()) {
 
+  if (!font_.loadFromFile("../sfml_window/Georama-Medium.ttf"))
+    throw "bad file";
   dots_.reserve(lock.GetSize());
 
   for (int y = 0; y < lock.GetShape().y; y++)
@@ -82,7 +87,7 @@ void View::Draw(sf::RenderWindow &window) {
 
     line.Draw(window, start_placement, finish_placement);
   }
-
+  int i = 0;
   for (auto dot : dots_) {
 
     sf::Vector2f placement = {
@@ -94,5 +99,21 @@ void View::Draw(sf::RenderWindow &window) {
     dot.radius = dot_radius;
 
     dot.Draw(window, placement);
+    DisplayLabel(i++, placement, dot_radius ,dot.state == Dot::State::OCCUPIED,window);
   }
+}
+void View::DisplayLabel(int label, sf::Vector2f placement,float dot_radius, bool is_occupied,
+                        sf::RenderWindow &window) {
+  std::string raw_text = std::to_string(label);
+  sf::Text text(raw_text, font_);
+
+  text.setPosition(placement.x + (dot_radius * 3), placement.y - (dot_radius * 3));
+  text.setCharacterSize(dot_radius * 3);
+//  text.setStyle(sf::Text::Bold);
+
+  if (is_occupied)
+    text.setFillColor(sf::Color::Cyan);
+  else
+    text.setFillColor(sf::Color::White);
+  window.draw(text);
 }

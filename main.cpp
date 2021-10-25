@@ -19,9 +19,6 @@ int main() {
   Lock test(3, 3);
   screen.PushFrame(View(test));
 
-  int s_val = -1;
-  int f_val = -1;
-
   while (1 < 2) {
     char letter;
     letter = getch();
@@ -45,9 +42,10 @@ int main() {
         printf("incorrect input\n");
       screen.PushFrame(test);
       break;
-
     }
   }
 fin:
   return 0;
 }
+
+
