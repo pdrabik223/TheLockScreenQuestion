@@ -29,13 +29,13 @@ public:
   void PushLine(const Lock::Line &new_gesture);
   void PushPin(unsigned s, unsigned f);
   void PushPin(unsigned f);
-  void Clear() {
-    lines_.clear();
-    for (int i = 0; i < GetSize(); ++i) {
-      dots_[i] = false;
-    }
-    pin_.clear();
-  };
+  void Clear();
+  bool CheckInput(unsigned input) {
+
+    if(input < 0 ) return false;
+    if(input >= GetSize()) return false;
+    return !dots_[input];
+  }
 
 private:
   int Int(const pm::Coord &position) const { return position.ToInt(shape_.x); }
@@ -46,7 +46,5 @@ protected:
   Blockade lines_;
   Pin pin_;
 };
-
-
 
 #endif // THELOCKSCREENQUESTION__LOCK_H_

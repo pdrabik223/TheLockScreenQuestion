@@ -55,3 +55,10 @@ void Lock::PushPin(unsigned int f) {
   }
   pin_.push_back(f);
 }
+void Lock::Clear() {
+  lines_.clear();
+  for (int i = 0; i < GetSize(); ++i) {
+    dots_[i] = false;
+  }
+  pin_.clear();
+}

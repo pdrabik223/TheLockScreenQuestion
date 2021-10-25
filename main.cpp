@@ -28,7 +28,10 @@ int main() {
       int value = letter - 48;
       if (value > test.GetSize())
         break;
-      test.PushPin(value);
+      if (test.CheckInput(value))
+        test.PushPin(value);
+      else
+        printf("incorrect input\n");
       screen.PushFrame(test);
       break;
     }
