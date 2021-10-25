@@ -3,6 +3,7 @@
 //
 
 #include "lock.h"
+#include <map>
 Lock::Lock(const pm::Coord &shape) : shape_(shape) {
   dots_.reserve(GetSize());
   lines_.reserve(GetSize() - 1);
@@ -104,13 +105,21 @@ float Lock::SecurityStatus() {
   float security_sum = 0;
   for (auto d : dots_)
     if (d)
-      security_sum += 2;
+      security_sum += 1;
+
+  // lines are grouped based of their angle between the bottom of the screen
+  std::map<float, int> line_group;
 
   for (const auto &l : lines_) {
     security_sum +=
-        sqrt(pow(l.first.x - l.second.x, 2) + pow(l.first.y - l.second.y, 2));
-  }
+        sqrt(pow(l.first.x - l.second.x, 2) + pow(l.first.y - l.second.y, 2)) /
+        sqrt(GetSize());
+    //        line_group[]++;
+    double delta_x = l.second.x - l.first.x;
+    double delta_y = (l.second.y + l.first.y) * -1;
+    double theta_radians = atan2(delta_y, delta_x);
 
+  }
 
   return security_sum;
 }
