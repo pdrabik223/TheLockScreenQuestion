@@ -13,7 +13,7 @@ sf::Font View::font_;
 void Dot::Draw(sf::RenderWindow &window, const sf::Vector2f &screen_placement) {
 
   sf::CircleShape circle(radius);
-  circle.setPointCount(10);
+  circle.setPointCount(30);
 
   switch (state) {
   case State::FREE:
@@ -34,9 +34,9 @@ void Line::Draw(sf::RenderWindow &window, sf::Vector2f screen_start,
                 sf::Vector2f screen_finish) {
 
   sf::VertexArray lines(sf::LinesStrip, 2);
-  lines[0].position = {screen_start.x + width, screen_start.y + width};
+  lines[0].position = {screen_start.x , screen_start.y};
   lines[0].color = sf::Color::Cyan;
-  lines[1].position = {screen_finish.x + width, screen_finish.y + width};
+  lines[1].position = {screen_finish.x, screen_finish.y};
   lines[1].color = sf::Color::Cyan;
 
   window.draw(lines);
@@ -81,12 +81,12 @@ void View::Draw(sf::RenderWindow &window) {
   for (auto line : lines_) {
 
     sf::Vector2f start_placement = {
-        (float)frame_shift.x + (line.GetStart().x * dot_shift.x) + dot_radius,
-        (float)frame_shift.y + (line.GetStart().y * dot_shift.y) + dot_radius};
+        (float)frame_shift.x + (line.GetStart().x * dot_shift.x) + dot_radius*2,
+        (float)frame_shift.y + (line.GetStart().y * dot_shift.y) + dot_radius*2};
 
     sf::Vector2f finish_placement = {
-        (float)frame_shift.x + (line.GetFinish().x * dot_shift.x) + dot_radius,
-        (float)frame_shift.y + (line.GetFinish().y * dot_shift.y) + dot_radius};
+        (float)frame_shift.x + (line.GetFinish().x * dot_shift.x)+ dot_radius*2,
+        (float)frame_shift.y + (line.GetFinish().y * dot_shift.y)+ dot_radius*2};
 
     line.Draw(window, start_placement, finish_placement);
   }

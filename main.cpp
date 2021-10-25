@@ -16,7 +16,7 @@ void DisplayPin(const std::vector<unsigned> &pin){
 int main() {
 
   Window screen(800, 800);
-  Lock test(3, 7);
+  Lock test(6, 6);
   screen.PushFrame(View(test));
 
   while (1 < 2) {
