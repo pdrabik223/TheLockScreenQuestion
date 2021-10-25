@@ -66,14 +66,17 @@ void View::Draw(sf::RenderWindow &window) {
   window.clear({40, 40, 40});
 
   float dot_radius;
-  dot_radius = (window.getSize().x < window.getSize().y ? window.getSize().x
-                                                        : window.getSize().y) /
-               80;
 
-  sf::Vector2f frame_shift = {dot_radius * 10, dot_radius * 10};
+  dot_radius = (window.getSize().x / shape_.x < window.getSize().y / shape_.y
+                    ? window.getSize().x / shape_.x
+                    : window.getSize().y / shape_.y);
+  dot_radius /= 20;
 
   sf::Vector2f dot_shift = {((float)window.getSize().x / (float)shape_.x),
                             ((float)window.getSize().y / (float)shape_.y)};
+
+  sf::Vector2f frame_shift = {dot_shift.x / 2 - dot_radius * 2,
+                              dot_shift.y / 2 -  dot_radius * 2};
 
   for (auto line : lines_) {
 
@@ -99,17 +102,19 @@ void View::Draw(sf::RenderWindow &window) {
     dot.radius = dot_radius;
 
     dot.Draw(window, placement);
-    DisplayLabel(i++, placement, dot_radius ,dot.state == Dot::State::OCCUPIED,window);
+    DisplayLabel(i++, placement, dot_radius, dot.state == Dot::State::OCCUPIED,
+                 window);
   }
 }
-void View::DisplayLabel(int label, sf::Vector2f placement,float dot_radius, bool is_occupied,
-                        sf::RenderWindow &window) {
+void View::DisplayLabel(int label, sf::Vector2f placement, float dot_radius,
+                        bool is_occupied, sf::RenderWindow &window) {
   std::string raw_text = std::to_string(label);
   sf::Text text(raw_text, font_);
 
-  text.setPosition(placement.x + (dot_radius * 3), placement.y - (dot_radius * 3));
+  text.setPosition(placement.x + (dot_radius * 3),
+                   placement.y - (dot_radius * 3));
   text.setCharacterSize(dot_radius * 3);
-//  text.setStyle(sf::Text::Bold);
+  //  text.setStyle(sf::Text::Bold);
 
   if (is_occupied)
     text.setFillColor(sf::Color::Cyan);

@@ -16,13 +16,13 @@ void DisplayPin(const std::vector<unsigned> &pin){
 int main() {
 
   Window screen(800, 800);
-  Lock test(3, 3);
+  Lock test(3, 7);
   screen.PushFrame(View(test));
 
   while (1 < 2) {
-    char letter;
-    letter = getch();
-    switch (letter) {
+    std::string command;
+    std::getline(std::cin,command);
+    switch (command[0]) {
     case 'q':
       goto fin;
     case 'c':
@@ -33,7 +33,8 @@ int main() {
       DisplayPin(test.GetEmptyDots());
       break;
     default:
-      int value = letter - 48;
+
+      int value = std::stoi(command);
       if (value > test.GetSize())
         break;
       if (test.CheckInput(value))
@@ -47,5 +48,4 @@ int main() {
 fin:
   return 0;
 }
-
 
