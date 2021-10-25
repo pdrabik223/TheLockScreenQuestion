@@ -95,10 +95,12 @@ bool Lock::CheckInput(unsigned int input) {
 }
 Lock::Pin Lock::GetEmptyDots() {
   Pin empty_list;
-  for (int i = 0; i < GetSize(); ++i)
-    if (!dots_[i])
-      empty_list.push_back(i);
+  for (int i = 0; i < GetSize(); ++i) {
 
+    if (!dots_[i])
+
+      empty_list.push_back(i);
+  }
   return empty_list;
 }
 
@@ -127,8 +129,9 @@ double Lock::SecurityStatus() {
     // that's -0.33 for every repetition
     if (lg.second == 1)
       lg.second--;
-//    if(lg.second == 0) // bad idea; solutions generated using this are shitty
-//      lg.second++;
+    //    if(lg.second == 0) // bad idea; solutions generated using this are
+    //    shitty
+    //      lg.second++;
     security_sum -= lg.second;
   }
 
@@ -136,19 +139,18 @@ double Lock::SecurityStatus() {
 }
 std::vector<std::pair<Lock::Pin, double>> Lock::GenerateLocks() {
   std::vector<std::pair<Pin, double>> output_vector;
-  for (auto move : GetEmptyDots()) {
+
+  Pin possible;
+  if(pin_.empty()) possible = GetEmptyDots();
+  else possible = GenPossibleMoves(pin_.back());
+
+  for (auto move : possible) {
     Lock temp(*this);
     temp.PushPin(move);
 
     Lock::Pin temp_pin = temp.GetPin();
 
     if (temp_pin.size() >= 4) {
-
-      assert(std::find(output_vector.begin(), output_vector.end(),
-                       std::pair<Lock::Pin, double>(temp_pin,
-                                                    temp.SecurityStatus())) ==
-             output_vector.end());
-
       output_vector.emplace_back(
           std::pair<Lock::Pin, double>(temp_pin, temp.SecurityStatus()));
     }
@@ -158,3 +160,27 @@ std::vector<std::pair<Lock::Pin, double>> Lock::GenerateLocks() {
   return output_vector;
 }
 const Lock::Pin &Lock::GetPin() const { return pin_; }
+Lock::Pin Lock::GenPossibleMoves(unsigned position) {
+  Pin empty_dots = GetEmptyDots();
+  int x = position % shape_.x;
+  int y = position / shape_.x;
+
+  for (int d = 0 ;d<empty_dots.size();++d) {
+
+    float dx = abs(x - (int)empty_dots[d] % shape_.x);
+    float dy = abs(y - (int)empty_dots[d] / shape_.x);
+
+    for (int i = GetSize()-1; i >= 0 ; --i) {
+      if (!dots_[i]) {
+        float ddx = abs(x - (i % shape_.x));
+        float ddy = abs(y - (i / shape_.x));
+        if (dy / dx == ddy / ddx) {
+          if (sqrt(pow(ddx, 2)) + pow(ddy, 2) < sqrt(pow(dx, 2)) + pow(dy, 2))
+            empty_dots.erase(empty_dots.begin() + d);
+        }
+      }
+    }
+  }
+
+  return empty_dots;
+}

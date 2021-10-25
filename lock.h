@@ -53,6 +53,7 @@ public:
   double SecurityStatus();
   std::vector<std::pair<Lock::Pin, double>> GenerateLocks();
   const Pin &GetPin() const;
+  Pin GenPossibleMoves(unsigned position);
 
 private:
   int Int(const pm::Coord &position) const { return position.ToInt(shape_.x); }
