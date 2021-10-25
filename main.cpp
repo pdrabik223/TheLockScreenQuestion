@@ -5,6 +5,14 @@
 #include "sfml_window/window.h"
 #include <string>
 
+void DisplayPin(const std::vector<unsigned> &pin){
+    printf("pin: ");
+  for (auto item:pin) {
+    printf("%d ",item);
+  }
+  printf("\n");
+}
+
 int main() {
 
   Window screen(800, 800);
@@ -24,6 +32,9 @@ int main() {
       test.Clear();
       screen.PushFrame(test);
       break;
+    case 'p':
+      DisplayPin(test.GetEmptyDots());
+      break;
     default:
       int value = letter - 48;
       if (value > test.GetSize())
@@ -34,6 +45,7 @@ int main() {
         printf("incorrect input\n");
       screen.PushFrame(test);
       break;
+
     }
   }
 fin:

@@ -32,7 +32,7 @@ void Lock::PushLine(const Lock::Line &new_gesture) {
     if (!dots_[i]) {
       float ddx = abs(new_gesture.first.x - (i % shape_.x));
       float ddy = abs(new_gesture.first.y - (i / shape_.x));
-      if (dy/dx == ddy/ddx) {
+      if (dy / dx == ddy / ddx) {
         if (sqrt(pow(ddx, 2)) + pow(ddy, 2) < sqrt(pow(dx, 2)) + pow(dy, 2))
           dots_[i] = true;
       }
@@ -83,4 +83,20 @@ void Lock::Clear() {
     dots_[i] = false;
   }
   pin_.clear();
+}
+bool Lock::CheckInput(unsigned int input) {
+
+  if (input < 0)
+    return false;
+  if (input >= GetSize())
+    return false;
+  return !dots_[input];
+}
+Lock::Pin Lock::GetEmptyDots() {
+  Pin empty_list;
+  for (int i = 0; i < GetSize(); ++i) {
+    if (!dots_[i])
+      empty_list.push_back(i);
+  }
+  return empty_list;
 }

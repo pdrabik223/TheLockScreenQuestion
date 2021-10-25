@@ -30,13 +30,8 @@ public:
   void PushPin(unsigned s, unsigned f);
   void PushPin(unsigned f);
   void Clear();
-  bool CheckInput(unsigned input) {
-
-    if(input < 0 ) return false;
-    if(input >= GetSize()) return false;
-    return !dots_[input];
-  }
-
+  bool CheckInput(unsigned input);
+  Pin GetEmptyDots();
 private:
   int Int(const pm::Coord &position) const { return position.ToInt(shape_.x); }
 
