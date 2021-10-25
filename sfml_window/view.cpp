@@ -20,7 +20,7 @@ void Dot::Draw(sf::RenderWindow &window, const sf::Vector2f &screen_placement) {
     circle.setFillColor(sf::Color::White);
     break;
   case State::OCCUPIED:
-    circle.setFillColor(sf::Color::Cyan);
+    circle.setFillColor(FOREGROUND_COLOR);
     break;
   }
   circle.setPosition(screen_placement.x, screen_placement.y);
@@ -35,9 +35,9 @@ void Line::Draw(sf::RenderWindow &window, sf::Vector2f screen_start,
 
   sf::VertexArray lines(sf::LinesStrip, 2);
   lines[0].position = {screen_start.x , screen_start.y};
-  lines[0].color = sf::Color::Cyan;
+  lines[0].color = FOREGROUND_COLOR;
   lines[1].position = {screen_finish.x, screen_finish.y};
-  lines[1].color = sf::Color::Cyan;
+  lines[1].color = FOREGROUND_COLOR;
 
   window.draw(lines);
 }
@@ -117,7 +117,7 @@ void View::DisplayLabel(int label, sf::Vector2f placement, float dot_radius,
   //  text.setStyle(sf::Text::Bold);
 
   if (is_occupied)
-    text.setFillColor(sf::Color::Cyan);
+    text.setFillColor(FOREGROUND_COLOR);
   else
     text.setFillColor(sf::Color::White);
   window.draw(text);

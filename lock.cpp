@@ -95,12 +95,13 @@ bool Lock::CheckInput(unsigned int input) {
 }
 Lock::Pin Lock::GetEmptyDots() {
   Pin empty_list;
-  for (int i = 0; i < GetSize(); ++i) {
+  for (int i = 0; i < GetSize(); ++i)
     if (!dots_[i])
       empty_list.push_back(i);
-  }
+
   return empty_list;
 }
+
 double Lock::SecurityStatus() {
   double security_sum = 0;
   for (auto d : dots_)
@@ -117,15 +118,18 @@ double Lock::SecurityStatus() {
     double delta_x = l.second.x - l.first.x;
     double delta_y = (l.second.y + l.first.y) * -1;
     double theta_radians = atan2(delta_y, delta_x);
+    theta_radians = abs(theta_radians);
     line_group[theta_radians]++;
   }
 
   for (auto lg : line_group) {
 
     // that's -0.33 for every repetition
-    if (lg.second >= 1)
+    if (lg.second == 1)
       lg.second--;
-    security_sum -= lg.second / sqrt(GetSize());
+//    if(lg.second == 0) // bad idea; solutions generated using this are shitty
+//      lg.second++;
+    security_sum -= lg.second;
   }
 
   return security_sum;
@@ -137,11 +141,17 @@ std::vector<std::pair<Lock::Pin, double>> Lock::GenerateLocks() {
     temp.PushPin(move);
 
     Lock::Pin temp_pin = temp.GetPin();
-    double temp_security = temp.SecurityStatus();
 
-    output_vector.emplace_back(
-        std::pair<Lock::Pin, double>(temp_pin, temp_security));
+    if (temp_pin.size() >= 4) {
 
+      assert(std::find(output_vector.begin(), output_vector.end(),
+                       std::pair<Lock::Pin, double>(temp_pin,
+                                                    temp.SecurityStatus())) ==
+             output_vector.end());
+
+      output_vector.emplace_back(
+          std::pair<Lock::Pin, double>(temp_pin, temp.SecurityStatus()));
+    }
     for (const auto &pin : temp.GenerateLocks())
       output_vector.push_back(pin);
   }

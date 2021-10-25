@@ -8,6 +8,10 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <coord/coord.h>
+#define BACKGROUND_COLOR sf::Color(27,29,28) // good gray
+//#define FOREGROUND_COLOR sf::Color(104,255,66) // good green
+//#define FOREGROUND_COLOR sf::Color(0,255,255) //  good cyan
+#define FOREGROUND_COLOR sf::Color(247,56,56) // good red
 
 struct Dot {
   enum class State { FREE, OCCUPIED };

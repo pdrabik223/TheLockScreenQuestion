@@ -15,6 +15,8 @@ void DisplayPin(const std::vector<unsigned> &pin) {
   printf("\n");
 }
 
+/// best one so far   {4,0,5,6,2,3,8,1,7}
+
 int main() {
 
   Window screen(800, 800);
@@ -38,23 +40,26 @@ int main() {
       std::vector<std::pair<Lock::Pin, double>> locks = test.GenerateLocks();
       double best_lock = 0;
       unsigned partial_sum = 0;
+
       for (const auto &pair : locks) {
-        if (pair.first.size() >= 4)
-          partial_sum++;
+        partial_sum++;
         best_lock = best_lock > pair.second ? best_lock : pair.second;
       }
+
       std::vector<Lock::Pin> best_locks;
-      for (const auto &pair : locks) {
+
+      for (const auto &pair : locks)
         if (pair.second == best_lock)
           best_locks.push_back(pair.first);
-      }
 
-      printf("\tno generated locks: %d\n", locks.size());
-      printf("\tno generated locks, in length >= 4 : %d\n", partial_sum);
+      printf("\tno generated correct locks : %d\n", partial_sum);
       printf("\tbest security award : %lf\n", best_lock);
       printf("\tno locks with best security award : %d\n", best_locks.size());
+
       DisplayInSequence(best_locks, screen, test);
+
     } break;
+
     default:
 
       int value = std::stoi(command);
@@ -73,6 +78,8 @@ fin:
   return 0;
 }
 
+
+
 void DisplayInSequence(const std::vector<Lock::Pin> &best_locks, Window &screen,
                        Lock &test) {
   for (auto pin : best_locks) {
@@ -82,5 +89,10 @@ void DisplayInSequence(const std::vector<Lock::Pin> &best_locks, Window &screen,
       screen.PushFrame(test);
       getch();
     }
+    printf("\tpin:\n");
+    for (auto p : pin) {
+      printf("\t%d, ", p);
+    }
+    printf("\n");
   }
 }
