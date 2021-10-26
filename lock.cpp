@@ -121,7 +121,11 @@ double Lock::SecurityStatus() {
     double delta_y = (l.second.y + l.first.y) * -1;
     double theta_radians = atan2(delta_y, delta_x);
     theta_radians = abs(theta_radians);
-    line_group[theta_radians]++;
+
+    if(line_group.find(theta_radians) == line_group.begin())
+      line_group.emplace(theta_radians,1)  ;
+    else
+      line_group[theta_radians]++;
   }
 
   for (auto lg : line_group) {
@@ -132,7 +136,7 @@ double Lock::SecurityStatus() {
     //    if(lg.second == 0) // bad idea; solutions generated using this are
     //    shitty
     //      lg.second++;
-    security_sum -= lg.second;
+    security_sum -= lg.second /  sqrt(GetSize());
   }
 
   return security_sum;
@@ -160,6 +164,7 @@ std::vector<std::pair<Lock::Pin, double>> Lock::GenerateLocks() {
   return output_vector;
 }
 const Lock::Pin &Lock::GetPin() const { return pin_; }
+
 Lock::Pin Lock::GenPossibleMoves(unsigned position) {
   Pin empty_dots = GetEmptyDots();
   int x = position % shape_.x;

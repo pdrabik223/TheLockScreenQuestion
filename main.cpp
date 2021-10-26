@@ -15,8 +15,16 @@ void DisplayPin(const std::vector<unsigned> &pin) {
   printf("\n");
 }
 
-/// best one so far   {4,0,5,6,2,3,8,1,7}
+/// best of  v1.0   {4,0,5,6,2,3,8,1,7}
+/// best of  v1.5   {4,2,6,1,7,0,8,3,5}
+// 14.259757
+//  total no_of Patterns 389,112
+//  I have 2,4k to much
 
+/// todo 1. fix to many "solutions" bug
+/// todo 2. cmake "copy files automatically"
+/// todo 3. "GenerateLocks()" is a bit slow, every single
+/// todo 4. SecurityStatus() is not all-directional
 int main() {
 
   Window screen(800, 800);
@@ -27,6 +35,7 @@ int main() {
     std::string command;
     std::getline(std::cin, command);
     switch (command[0]) {
+
     case 'q':
       goto fin;
     case 'c':
@@ -34,7 +43,10 @@ int main() {
       screen.PushFrame(test);
       break;
     case 'p':
-      DisplayPin(test.GetEmptyDots());
+      if (!test.GetPin().empty())
+        DisplayPin(test.GenPossibleMoves(test.GetPin().back()));
+      else
+        printf("first enter first pin number");
       break;
     case 'l': {
       std::vector<std::pair<Lock::Pin, double>> locks = test.GenerateLocks();
@@ -59,7 +71,11 @@ int main() {
       DisplayInSequence(best_locks, screen, test);
 
     } break;
-
+    case 'h':
+      printf(" <q> to exit app\n <c> to clear screen\n <p> to display possible "
+             "to connect dots\n <l> to calculate all possibilities\n <number> "
+             "to connect to next dot manually\n");
+      break;
     default:
 
       int value = std::stoi(command);
@@ -77,8 +93,6 @@ int main() {
 fin:
   return 0;
 }
-
-
 
 void DisplayInSequence(const std::vector<Lock::Pin> &best_locks, Window &screen,
                        Lock &test) {
