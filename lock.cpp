@@ -3,10 +3,12 @@
 //
 
 #include "lock.h"
+#include <clock/clock.h>
 #include <map>
+
 Lock::Lock(const pm::Coord &shape) : shape_(shape) {
   dots_.reserve(GetSize());
-  lines_.reserve(GetSize() - 1);
+
 
   for (int d = 0; d < GetSize(); ++d) {
     dots_[d] = false;
@@ -14,7 +16,20 @@ Lock::Lock(const pm::Coord &shape) : shape_(shape) {
 }
 unsigned Lock::GetSize() const { return shape_.x * shape_.y; }
 const std::vector<bool> &Lock::GetDots() const { return dots_; }
-const std::vector<Lock::Line> &Lock::GetLines() const { return lines_; }
+std::vector<Lock::Line> Lock::GetLines() const {
+
+  Blockade lines;
+  if(pin_.size() <2 )return {};
+  auto s = pin_[0];
+  for (int p = 1; p < pin_.size(); ++p) {
+    auto f = pin_[p];
+    lines.push_back({{(int)s % shape_.x, (int)s / shape_.x},
+                        {(int)f % shape_.x, (int)f / shape_.x}});
+    s = f;
+  }
+
+  return lines;
+}
 pm::Coord Lock::GetShape() const { return shape_; }
 void Lock::PushLine(const Lock::Line &new_gesture) {
 
@@ -31,9 +46,11 @@ void Lock::PushLine(const Lock::Line &new_gesture) {
 
   for (int i = 0; i < GetSize(); i++) {
     if (!dots_[i]) {
+
       float ddx = abs(new_gesture.first.x - (i % shape_.x));
       float ddy = abs(new_gesture.first.y - (i / shape_.x));
-      if (dy / dx == ddy / ddx) {
+
+      if (dy * ddx == ddy * dx) {
         if (sqrt(pow(ddx, 2)) + pow(ddy, 2) < sqrt(pow(dx, 2)) + pow(dy, 2))
           dots_[i] = true;
       }
@@ -43,12 +60,11 @@ void Lock::PushLine(const Lock::Line &new_gesture) {
   dots_[Int(new_gesture.first)] = true;
   dots_[Int(new_gesture.second)] = true;
 
-  lines_.push_back(new_gesture);
+
 }
 
 Lock::Lock(unsigned int x, unsigned y) : shape_(x, y) {
   dots_.reserve(GetSize());
-  lines_.reserve(GetSize() - 1);
 
   for (int d = 0; d < GetSize(); ++d) {
     dots_.emplace_back(false);
@@ -69,7 +85,7 @@ void Lock::PushPin(unsigned int s, unsigned int f) {
 }
 
 void Lock::PushPin(unsigned int f) {
-
+  AUTO_CLOCK;
   if (!pin_.empty())
     PushLine({{(int)pin_.back() % shape_.x, (int)pin_.back() / shape_.x},
               {(int)f % shape_.x, (int)f / shape_.x}});
@@ -79,7 +95,7 @@ void Lock::PushPin(unsigned int f) {
   pin_.push_back(f);
 }
 void Lock::Clear() {
-  lines_.clear();
+
   for (int i = 0; i < GetSize(); ++i) {
     dots_[i] = false;
   }
@@ -94,6 +110,7 @@ bool Lock::CheckInput(unsigned int input) {
   return !dots_[input];
 }
 Lock::Pin Lock::GetEmptyDots() {
+  AUTO_CLOCK;
   Pin empty_list;
   for (int i = 0; i < GetSize(); ++i) {
 
@@ -113,7 +130,7 @@ double Lock::SecurityStatus() {
   // lines are grouped based of their angle between the bottom of the screen
   std::map<double, int> line_group;
 
-  for (const auto &l : lines_) {
+  for (const auto &l : GetLines()) {
     security_sum +=
         sqrt(pow(l.first.x - l.second.x, 2) + pow(l.first.y - l.second.y, 2)) /
         sqrt(GetSize());
@@ -141,7 +158,9 @@ double Lock::SecurityStatus() {
 
   return security_sum;
 }
+
 std::vector<std::pair<Lock::Pin, double>> Lock::GenerateLocks() {
+  AUTO_CLOCK;
   std::vector<std::pair<Pin, double>> output_vector;
 
   Pin possible;
@@ -168,16 +187,18 @@ std::vector<std::pair<Lock::Pin, double>> Lock::GenerateLocks() {
 const Lock::Pin &Lock::GetPin() const { return pin_; }
 
 Lock::Pin Lock::GenPossibleMoves(unsigned position) {
+  AUTO_CLOCK;
   Pin empty_dots = GetEmptyDots();
+
   int x = position % shape_.x;
   int y = position / shape_.x;
 
-  for (int d = empty_dots.size() -1 ; d >= 0 ; --d) {
+  for (int d = empty_dots.size() - 1; d >= 0; --d) {
 
     float dx = abs(x - (int)empty_dots[d] % shape_.x);
     float dy = abs(y - (int)empty_dots[d] / shape_.x);
 
-    for (int i = 0; i < GetSize() ; ++i) {
+    for (int i = 0; i < GetSize(); ++i) {
       if (!dots_[i]) {
 
         float ddx = abs(x - (i % shape_.x));

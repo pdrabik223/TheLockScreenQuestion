@@ -34,7 +34,6 @@ int main() {
     std::string command;
     std::getline(std::cin, command);
     switch (command[0]) {
-
     case 'q':
       goto fin;
     case 'c':
@@ -48,7 +47,12 @@ int main() {
         printf("first enter first pin number");
       break;
     case 'l': {
-      std::vector<std::pair<Lock::Pin, double>> locks = test.GenerateLocks();
+      std::vector<std::pair<Lock::Pin, double>> locks ;
+
+      for (int i = 0; i < 100; i++) {
+        test.GenerateLocks();
+        test.Clear();
+      }
       double best_lock = 0;
       unsigned partial_sum = 0;
 
@@ -66,7 +70,7 @@ int main() {
       printf("\tno generated correct locks : %d\n", partial_sum);
       printf("\tbest security award : %lf\n", best_lock);
       printf("\tno locks with best security award : %d\n", best_locks.size());
-
+      DISPLAY_TIMINGS;
       DisplayInSequence(best_locks, screen, test);
 
     } break;
@@ -76,7 +80,6 @@ int main() {
              "to connect to next dot manually\n");
       break;
     default:
-
       int value = std::stoi(command);
       if (value > test.GetSize())
         break;

@@ -21,7 +21,7 @@ public:
   Lock(const Lock &other) {
     shape_ = other.shape_;
     dots_ = other.dots_;
-    lines_ = other.lines_;
+
     pin_ = other.pin_;
   };
 
@@ -30,7 +30,7 @@ public:
       return *this;
     shape_ = other.shape_;
     dots_ = other.dots_;
-    lines_ = other.lines_;
+
     pin_ = other.pin_;
 
     return *this;
@@ -39,7 +39,7 @@ public:
   unsigned GetSize() const;
   pm::Coord GetShape() const;
   const std::vector<bool> &GetDots() const;
-  const std::vector<Line> &GetLines() const;
+  std::vector<Lock::Line> GetLines() const;
   bool GetDotState(const pm::Coord &position) const {
     return dots_[Int(position)];
   }
@@ -62,7 +62,6 @@ private:
 protected:
   pm::Coord shape_;
   std::vector<bool> dots_;
-  Blockade lines_;
   Pin pin_;
 };
 

@@ -28,6 +28,7 @@ void Dot::Draw(sf::RenderWindow &window, const sf::Vector2f &screen_placement) {
   window.draw(circle);
 }
 const pm::Coord &Dot::GetPlacement() const { return placement; }
+
 void Dot::SetRadius(float radius) { Dot::radius = radius; }
 
 void Line::Draw(sf::RenderWindow &window, sf::Vector2f screen_start,
