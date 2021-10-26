@@ -21,7 +21,6 @@ void DisplayPin(const std::vector<unsigned> &pin) {
 //  total no_of Patterns 389,112
 //  I have 2,4k to much
 
-/// todo 1. fix to many "solutions" bug
 /// todo 2. cmake "copy files automatically"
 /// todo 3. "GenerateLocks()" is a bit slow, every single
 /// todo 4. SecurityStatus() is not all-directional

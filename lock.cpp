@@ -122,8 +122,8 @@ double Lock::SecurityStatus() {
     double theta_radians = atan2(delta_y, delta_x);
     theta_radians = abs(theta_radians);
 
-    if(line_group.find(theta_radians) == line_group.begin())
-      line_group.emplace(theta_radians,1)  ;
+    if (line_group.find(theta_radians) == line_group.begin())
+      line_group.emplace(theta_radians, 1);
     else
       line_group[theta_radians]++;
   }
@@ -136,7 +136,7 @@ double Lock::SecurityStatus() {
     //    if(lg.second == 0) // bad idea; solutions generated using this are
     //    shitty
     //      lg.second++;
-    security_sum -= lg.second /  sqrt(GetSize());
+    security_sum -= lg.second / sqrt(GetSize());
   }
 
   return security_sum;
@@ -145,8 +145,10 @@ std::vector<std::pair<Lock::Pin, double>> Lock::GenerateLocks() {
   std::vector<std::pair<Pin, double>> output_vector;
 
   Pin possible;
-  if(pin_.empty()) possible = GetEmptyDots();
-  else possible = GenPossibleMoves(pin_.back());
+  if (pin_.empty())
+    possible = GetEmptyDots();
+  else
+    possible = GenPossibleMoves(pin_.back());
 
   for (auto move : possible) {
     Lock temp(*this);
@@ -170,16 +172,18 @@ Lock::Pin Lock::GenPossibleMoves(unsigned position) {
   int x = position % shape_.x;
   int y = position / shape_.x;
 
-  for (int d = 0 ;d<empty_dots.size();++d) {
+  for (int d = empty_dots.size() -1 ; d >= 0 ; --d) {
 
     float dx = abs(x - (int)empty_dots[d] % shape_.x);
     float dy = abs(y - (int)empty_dots[d] / shape_.x);
 
-    for (int i = GetSize()-1; i >= 0 ; --i) {
+    for (int i = 0; i < GetSize() ; ++i) {
       if (!dots_[i]) {
+
         float ddx = abs(x - (i % shape_.x));
         float ddy = abs(y - (i / shape_.x));
-        if (dy / dx == ddy / ddx) {
+
+        if (dy * ddx == ddy * dx) {
           if (sqrt(pow(ddx, 2)) + pow(ddy, 2) < sqrt(pow(dx, 2)) + pow(dy, 2))
             empty_dots.erase(empty_dots.begin() + d);
         }
